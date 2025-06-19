@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Entity, PrimaryColumn, ManyToOne, CreateDateColumn } from 'typeorm';
-import { User } from './user.entity'; // Импорт сущности User
+import { User } from '../users/user.entity'; // Импорт сущности User
 
 @Entity()
 export class Like {
