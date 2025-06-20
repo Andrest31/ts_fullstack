@@ -1,58 +1,40 @@
-services:
-  proxy:
-    container_name: cat-pinterest-proxy
-    image: nginx:1.24-alpine-slim
-    volumes:
-      - type: bind
-        source: ./nginx.conf
-        target: /etc/nginx/nginx.conf
-        read_only: true
-    depends_on:
-      cat-pinterest-api:
-        condition: service_started
-    ports:
-      - "8080:80"
-    networks:
-      - cat-pinterest-net
+version: '3.8'  # Явно указываем версию для совместимости
 
-  cat-pinterest-api:
+services:
+  api:
     container_name: cat-pinterest-api
-    image: cat-pinterest-api
     build:
-      context: ./api/
+      context: ./api
+    ports:
+      - "3000:3000"  # Пробрасываем порт NestJS напрямую
     networks:
       - cat-pinterest-net
     environment:
       NODE_ENV: prod
+      DATABASE_URL: "postgres://postgres:1@db:5432/support_lk_db"
     depends_on:
-      cat-pinterest-api-pg:
+      db:
         condition: service_healthy
 
-  cat-pinterest-front:
-    container_name: cat-pinterest-front
-    image: cat-pinterest-front
-    build:
-      context: ./front/
-    networks:
-      - cat-pinterest-net
-    environment:
-      NODE_ENV: prod
-
-  cat-pinterest-api-pg:
+  db:
     container_name: cat-pinterest-api-pg
     image: postgres:14
-    networks:
-      - cat-pinterest-net
     environment:
       POSTGRES_PASSWORD: 1
       POSTGRES_USER: postgres
       POSTGRES_DB: support_lk_db
-    #      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # Сохраняем данные между перезапусками
+    networks:
+      - cat-pinterest-net
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
       timeout: 5s
       retries: 10
 
 networks:
   cat-pinterest-net:
+
+volumes:
+  pg_data:  # Объявляем volume для БД
