@@ -1,32 +1,73 @@
-version: '3.8'  # Явно указываем версию для совместимости
+version: '3.8'
 
 services:
-  api:
+  # Прокси (оставлен, но будет игнорироваться без фронтенда)
+  proxy:
+    container_name: cat-pinterest-proxy
+    image: nginx:1.24-alpine-slim
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    ports:
+      - "8080:80"
+    networks:
+      - cat-pinterest-net
+    # Отключаем зависимость от API, чтобы запускался независимо
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Бэкенд (основной сервис)
+  cat-pinterest-api:
     container_name: cat-pinterest-api
     build:
-      context: ./api
+      context: ./api/
     ports:
-      - "3000:3000"  # Пробрасываем порт NestJS напрямую
+      - "3000:3000"  # Добавляем прямой доступ к API
     networks:
       - cat-pinterest-net
     environment:
       NODE_ENV: prod
-      DATABASE_URL: "postgres://postgres:1@db:5432/support_lk_db"
+      DATABASE_URL: "postgres://postgres:1@cat-pinterest-api-pg:5432/support_lk_db"
     depends_on:
-      db:
+      cat-pinterest-api-pg:
         condition: service_healthy
 
-  db:
+  # Фронтенд (оставлен, но не будет мешать)
+  cat-pinterest-front:
+    container_name: cat-pinterest-front
+    image: cat-pinterest-front
+    build:
+      context: ./front/
+    networks:
+      - cat-pinterest-net
+    environment:
+      NODE_ENV: prod
+    # Явно отключаем автостарт
+    restart: "no"
+    # Добавляем healthcheck для возможного ручного запуска
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # БД (без изменений)
+  cat-pinterest-api-pg:
     container_name: cat-pinterest-api-pg
     image: postgres:14
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # Добавляем volume для сохранения данных
+    networks:
+      - cat-pinterest-net
     environment:
       POSTGRES_PASSWORD: 1
       POSTGRES_USER: postgres
       POSTGRES_DB: support_lk_db
-    volumes:
-      - pg_data:/var/lib/postgresql/data  # Сохраняем данные между перезапусками
-    networks:
-      - cat-pinterest-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
