@@ -5,7 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './users/user.entity';
 import { Like } from './likes/like.entity';
-import { LikesModule } from './likes/like.module'; // Добавьте это
+import { LikesModule } from './likes/like.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { LikesModule } from './likes/like.module'; // Добавьте это
       synchronize: true,
       logging: true,
     }),
-    LikesModule, // Добавьте это
+    LikesModule, 
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

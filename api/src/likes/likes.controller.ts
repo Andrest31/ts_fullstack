@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 // likes.controller.ts
-import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { LikesService } from './likes.service';
+import { HashAuthGuard } from 'src/auth/hash-auth.guard';
 
 @Controller('likes')
+@UseGuards(HashAuthGuard)
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
