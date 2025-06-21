@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Like } from './like.entity';
@@ -16,12 +16,14 @@ export class LikesService {
   }
 
   async create(catId: string): Promise<Like> {
-  const exists = await this.likesRepository.findOne({ where: { cat_id: catId } });
-  if (exists) {
-    throw new ConflictException('Like for this cat already exists');
+  if (!catId) {
+    throw new BadRequestException('cat_id is required');
   }
   
-  const like = this.likesRepository.create({ cat_id: catId });
+  const like = this.likesRepository.create({ 
+    cat_id: catId // Явно указываем поле
+  });
+  
   return this.likesRepository.save(like);
 }
 

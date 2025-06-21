@@ -13,3 +13,4 @@ export class Like {
   @CreateDateColumn()
   created_at: Date;
 }
+
