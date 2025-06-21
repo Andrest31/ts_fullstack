@@ -2,7 +2,7 @@
 import { Entity, PrimaryColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 import { User } from '../users/user.entity'; // Импорт сущности User
 
-@Entity()
+@Entity('likes')
 export class Like {
   @PrimaryColumn()
   cat_id: string; // ID из TheCatAPI
