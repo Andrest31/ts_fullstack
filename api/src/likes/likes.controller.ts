@@ -1,27 +1,33 @@
 /* eslint-disable prettier/prettier */
-// likes.controller.ts
-import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Body, Req, Delete, Param } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Request } from 'express';
 import { LikesService } from './likes.service';
-
+import { User } from '../users/user.entity';
 
 @Controller('likes')
-
+@UseGuards(JwtAuthGuard)
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
   @Get()
-  getAll() {
-    console.log('getAll called');
-    return this.likesService.findAll();
+  getUserLikes(@Req() req: Request & { user: User }) {
+    return this.likesService.getUserLikes(req.user.id);
   }
 
   @Post()
-  create(@Body() dto: { cat_id: string }) {
-    return this.likesService.create(dto.cat_id);
+  createLike(
+    @Body() body: { cat_id: string },
+    @Req() req: Request & { user: User }
+  ) {
+    return this.likesService.createLike(body.cat_id, req.user);
   }
 
   @Delete(':cat_id')
-  remove(@Param('cat_id') catId: string) {
-    return this.likesService.remove(catId);
+  remove(
+    @Param('cat_id') catId: string,
+    @Req() req: Request & { user: User }
+  ) {
+    return this.likesService.remove(catId, req.user.id);
   }
 }

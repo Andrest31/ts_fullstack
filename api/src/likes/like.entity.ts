@@ -5,12 +5,12 @@ import { User } from '../users/user.entity'; // Импорт сущности Us
 @Entity('likes')
 export class Like {
   @PrimaryColumn()
-  cat_id: string; // ID из TheCatAPI
+  cat_id: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, user => user.likes)
   user: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 }
 

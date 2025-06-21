@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Like } from '../likes/like.entity';
 
 @Entity('users')
 export class User {
@@ -11,4 +12,7 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Like, like => like.user)
+  likes: Like[];
 }
