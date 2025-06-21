@@ -20,7 +20,7 @@ export class LikesController {
     @Body() body: { cat_id: string },
     @Req() req: Request & { user: User }
   ) {
-    return this.likesService.createLike(body.cat_id, req.user);
+    return this.likesService.createLike(body.cat_id, req.user.id);
   }
 
   @Delete(':cat_id')
