@@ -1,0 +1,8 @@
+/* components/HeartIcon/HeartIcon.module.css */
+.heartIcon {
+  transition: transform 0.2s;
+}
+
+.heartIcon:hover {
+  transform: scale(1.1);
+}
