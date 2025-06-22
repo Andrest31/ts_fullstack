@@ -1,43 +1,33 @@
 // src/api/authService.ts
-import axios, { AxiosRequestHeaders } from 'axios';
-import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/user';
 
 export const authService = {
-  async login(credentials: { login: string; password: string }) {
+  async register(credentials: { login: string; password: string }) {
     try {
-      const response = await axios.post(API_URL, credentials, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axios.post(`${API_URL}`, credentials);
       
-      // Сохраняем токены
-      if (response.headers['authorization']) {
-        localStorage.setItem('access_token', response.headers['authorization'].split(' ')[1]);
+      // Сохраняем токены если они приходят в ответе
+      if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
       }
-      if (response.headers['x-auth-token']) {
-        localStorage.setItem('x_auth_token', response.headers['x-auth-token']);
+      if (response.data.x_auth_token) {
+        localStorage.setItem('x_auth_token', response.data.x_auth_token);
       }
 
-      return {
-        status: 'success',
-        data: response.data
-      };
+      return { status: 'success', data: response.data };
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Ошибка авторизации');
-      return {
+      if (error.response?.status === 409) {
+        return { 
+          status: 'error',
+          error: 'Пользователь с таким логином уже существует'
+        };
+      }
+      return { 
         status: 'error',
-        error: error.message
+        error: error.response?.data?.message || 'Ошибка регистрации'
       };
     }
   },
-
-  getAuthHeaders(): AxiosRequestHeaders {
-    const headers: AxiosRequestHeaders = new axios.AxiosHeaders();
-    headers.set('Authorization', `Bearer ${localStorage.getItem('access_token')}`);
-    headers.set('X-Auth-Token', localStorage.getItem('x_auth_token') || '');
-    return headers;
-  }
 };

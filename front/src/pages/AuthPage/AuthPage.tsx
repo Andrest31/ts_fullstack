@@ -16,7 +16,7 @@ const AuthPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const result = await authService.login({ login, password });
+    const result = await authService.register({ login, password });
     
     if (result.status === 'success') {
       toast.success('Авторизация успешна!');
