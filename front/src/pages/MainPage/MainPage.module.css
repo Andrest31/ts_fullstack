@@ -23,3 +23,38 @@ html, body {
   width: 100%;
   box-sizing: border-box;
 }
+
+/* Добавим стили для пагинации */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.cats-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.loading-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+/* Анимация для скелетона */
+@keyframes pulse {
+  0% { background-color: #f0f0f0; }
+  50% { background-color: #e0e0e0; }
+  100% { background-color: #f0f0f0; }
+}
+
+.cat-card-skeleton {
+  height: 250px;
+  border-radius: 8px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
