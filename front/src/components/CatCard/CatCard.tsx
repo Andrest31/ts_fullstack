@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CatCard.module.css';
 import HeartIcon from '../HeartIcon/HeartIcon';
+import { toast } from 'react-toastify';
 
 interface CatCardProps {
   cat: {
@@ -20,6 +21,7 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
   const handleLikeClick = () => {
     if (!localStorage.getItem('access_token')) {
       navigate('/auth');
+      toast.warn('Для доступа к этой функции необходима авторизация');
       return;
     }
     onLikeToggle(cat.id);

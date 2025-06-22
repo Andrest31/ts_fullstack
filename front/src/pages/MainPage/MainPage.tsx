@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import CatCard from '../../components/CatCard/CatCard';
+import { toast } from 'react-toastify';
 import './MainPage.module.css';
 
 interface Cat {
@@ -35,6 +36,7 @@ const MainPage: React.FC = () => {
   const handleTabChange = (tab: 'all' | 'favorites') => {
     if (tab === 'favorites' && !localStorage.getItem('access_token')) {
       navigate('/auth');
+      toast.warn('Для доступа к этой функции необходима авторизация');
       return;
     }
     setActiveTab(tab);
@@ -44,6 +46,7 @@ const MainPage: React.FC = () => {
     // Проверяем аутентификацию при лайке
     if (!localStorage.getItem('access_token')) {
       navigate('/auth');
+      toast.warn('Для доступа к этой функции необходима авторизация');
       return;
     }
     
