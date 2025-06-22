@@ -1,5 +1,6 @@
-// components/CatCard/CatCard.tsx
+// src/components/CatCard/CatCard.tsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './CatCard.module.css';
 import HeartIcon from '../HeartIcon/HeartIcon';
 
@@ -14,6 +15,15 @@ interface CatCardProps {
 
 const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLikeClick = () => {
+    if (!localStorage.getItem('access_token')) {
+      navigate('/auth');
+      return;
+    }
+    onLikeToggle(cat.id);
+  };
 
   return (
     <div 
@@ -27,7 +37,7 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
         <div className={styles.hoverOverlay}>
           <button 
             className={styles.likeButton}
-            onClick={() => onLikeToggle(cat.id)}
+            onClick={handleLikeClick}
           >
             <HeartIcon isLiked={isLiked} />
           </button>
