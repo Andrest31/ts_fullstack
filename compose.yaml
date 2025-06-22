@@ -44,6 +44,8 @@ services:
       context: ./front/
     networks:
       - cat-pinterest-net
+    ports:
+    - "5173:80"
     environment:
       NODE_ENV: prod
     # Явно отключаем автостарт
