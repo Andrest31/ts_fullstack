@@ -52,7 +52,7 @@ const MainPage: React.FC = () => {
     
     // Устанавливаем таймаут
     timeoutRef.current = setTimeout(() => {
-      setError('Превышено время ожидания загрузки. Используются моковые данные.');
+      setError('Превышено время ожидания загрузки. Временно используются моковые данные.');
       setCats(mockCats);
       setIsLoading(false);
     }, LOAD_TIMEOUT);

@@ -31,7 +31,7 @@ const AuthPage: React.FC = () => {
       toast.success('Авторизация успешна!');
       navigate('/'); 
     } else {
-      toast.error('Неизвестная ошибка');
+      toast.error('Неправильный логин');
     }
 
     setIsLoading(false);
