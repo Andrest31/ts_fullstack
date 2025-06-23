@@ -96,7 +96,7 @@ const MainPage: React.FC = () => {
         const signal = controller.signal;
         
         // Загружаем больше котов, чем нужно, чтобы избежать частых запросов
-        const response = await fetch(`${BASE_API_URL}?limit=100&size=small`, {
+        const response = await fetch(`${BASE_API_URL}?limit=300&size=small`, {
           headers: {
             'x-api-key': API_KEY
           },
