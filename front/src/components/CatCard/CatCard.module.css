@@ -8,13 +8,14 @@
   aspect-ratio: 1/1;
   margin: 0;
   max-width: 220px;
+  transform-origin: center; /* Добавляем это свойство */
 }
 
 .catCard:hover {
-  transform: scale(1.02);
-  margin: -10px;
+  transform: scale(1.1); /* Увеличиваем на 10% (можно изменить на 1.15 для 15px) */
   z-index: 1;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  margin: 0; /* Убираем отрицательный margin */
 }
 
 .catImage {

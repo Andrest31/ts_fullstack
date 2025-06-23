@@ -47,7 +47,8 @@ html, body {
 }
 
 .cat-card-skeleton {
-  height: 250px;
+  height: 220px;
+  width: 220px;
   border-radius: 8px;
   animation: pulse 1.5s infinite ease-in-out;
 }

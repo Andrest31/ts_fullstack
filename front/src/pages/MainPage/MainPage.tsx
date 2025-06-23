@@ -159,8 +159,8 @@ useEffect(() => {
       background: #f0f0f0;
       border-radius: 8px;
       overflow: hidden;
-      height: 227px;
-      weight: 227px;
+      height: 223px;
+      weight: 223px;
       position: relative;
     }
     
