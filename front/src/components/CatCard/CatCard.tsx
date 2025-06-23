@@ -4,6 +4,7 @@ import styles from './CatCard.module.css';
 import HeartIcon from '../HeartIcon/HeartIcon';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 interface CatCardProps {
   cat: {
@@ -46,7 +47,7 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
   }, [imageUrl, retryCount, cat.url]);
 
   const handleLikeClick = async () => {
-    if (!localStorage.getItem('access_token')) {
+    if (!Cookies.get('access_token')) {
       navigate('/auth');
       toast.warn('Для доступа к этой функции необходима авторизация');
       return;
@@ -54,7 +55,7 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
 
     setIsProcessing(true);
     try {
-      const token = localStorage.getItem('access_token');
+      const token = Cookies.get('access_token');
       
       if (isLiked) {
         // Удаляем лайк

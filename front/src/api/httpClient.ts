@@ -2,7 +2,8 @@
 import axios, { AxiosRequestHeaders } from 'axios';
 
 const httpClient = axios.create({
-  baseURL: 'http://localhost:3000'
+  baseURL: 'http://localhost:3000',
+  withCredentials: true
 });
 
 // Интерсептор для добавления заголовков

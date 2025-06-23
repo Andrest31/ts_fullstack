@@ -6,6 +6,7 @@ import CatCard from '../../components/CatCard/CatCard';
 import { toast } from 'react-toastify';
 import './MainPage.module.css';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 interface Cat {
   id: string;
@@ -100,12 +101,12 @@ const MainPage: React.FC = () => {
 
 useEffect(() => {
   const fetchUserLikes = async () => {
-    if (!localStorage.getItem('access_token')) return;
+    if (!Cookies.get('access_token')) return;
     
     try {
       const response = await axios.get('http://localhost:3000/api/likes', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          Authorization: `Bearer ${Cookies.get('access_token')}`
         }
       });
       
@@ -120,13 +121,13 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
-    if (activeTab === 'favorites' && !localStorage.getItem('access_token')) {
+    if (activeTab === 'favorites' && !Cookies.get('access_token')) {
       navigate('/auth');
     }
   }, [activeTab, navigate]);
 
   const handleTabChange = (tab: 'all' | 'favorites') => {
-    if (tab === 'favorites' && !localStorage.getItem('access_token')) {
+    if (tab === 'favorites' && !Cookies.get('access_token')) {
       navigate('/auth');
       toast.warn('Для доступа к этой функции необходима авторизация');
       return;
@@ -135,7 +136,7 @@ useEffect(() => {
   };
 
   const handleLikeToggle = (catId: string) => {
-    if (!localStorage.getItem('access_token')) {
+    if (!Cookies.get('access_token')) {
       navigate('/auth');
       toast.warn('Для доступа к этой функции необходима авторизация');
       return;
