@@ -5,6 +5,7 @@ import Header from '../../components/Header/Header';
 import CatCard from '../../components/CatCard/CatCard';
 import { toast } from 'react-toastify';
 import './MainPage.module.css';
+import axios from 'axios';
 
 interface Cat {
   id: string;
@@ -95,6 +96,27 @@ const MainPage: React.FC = () => {
   return () => {
     clearTimeout(timeoutRef.current);
   };
+}, []);
+
+useEffect(() => {
+  const fetchUserLikes = async () => {
+    if (!localStorage.getItem('access_token')) return;
+    
+    try {
+      const response = await axios.get('http://localhost:3000/api/likes', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      });
+      
+      const likedCatIds = response.data.map((like: any) => like.cat_id);
+      setLikedCats(likedCatIds);
+    } catch (error) {
+      console.error('Error fetching user likes:', error);
+    }
+  };
+
+  fetchUserLikes();
 }, []);
 
   useEffect(() => {

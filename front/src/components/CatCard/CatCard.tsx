@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './CatCard.module.css';
 import HeartIcon from '../HeartIcon/HeartIcon';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 interface CatCardProps {
   cat: {
@@ -13,13 +14,15 @@ interface CatCardProps {
   onLikeToggle: (id: string) => void;
 }
 
+const API_URL = 'http://localhost:3000/api/likes'; // Замените на ваш реальный URL
+
 const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageUrl, setImageUrl] = useState(cat.url);
   const [retryCount, setRetryCount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
-  // Fallback изображение
   const FALLBACK_IMAGE = 'https://cdn2.thecatapi.com/images/ebv.jpg';
 
   useEffect(() => {
@@ -28,13 +31,11 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
     
     img.onerror = () => {
       if (retryCount < 3) {
-        // Пробуем загрузить еще раз
         setTimeout(() => {
           setRetryCount(prev => prev + 1);
-          setImageUrl(`${cat.url}?retry=${retryCount}`); // Добавляем параметр чтобы избежать кеша
+          setImageUrl(`${cat.url}?retry=${retryCount}`);
         }, 1000 * retryCount);
       } else {
-        // Используем fallback после 3 неудачных попыток
         setImageUrl(FALLBACK_IMAGE);
       }
     };
@@ -44,13 +45,40 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
     };
   }, [imageUrl, retryCount, cat.url]);
 
-  const handleLikeClick = () => {
+  const handleLikeClick = async () => {
     if (!localStorage.getItem('access_token')) {
       navigate('/auth');
       toast.warn('Для доступа к этой функции необходима авторизация');
       return;
     }
-    onLikeToggle(cat.id);
+
+    setIsProcessing(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      
+      if (isLiked) {
+        // Удаляем лайк
+        await axios.delete(`${API_URL}/${cat.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      } else {
+        // Добавляем лайк
+        await axios.post(API_URL, { cat_id: cat.id }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      }
+      
+      onLikeToggle(cat.id); // Обновляем UI
+    } catch (error) {
+      console.error('Error processing like:', error);
+      toast.error('Произошла ошибка при обработке лайка');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -74,8 +102,10 @@ const CatCard: React.FC<CatCardProps> = ({ cat, isLiked, onLikeToggle }) => {
           <button 
             className={styles.likeButton}
             onClick={handleLikeClick}
+            disabled={isProcessing}
           >
             <HeartIcon isLiked={isLiked} />
+            {isProcessing && <span className={styles.spinner}></span>}
           </button>
         </div>
       )}
