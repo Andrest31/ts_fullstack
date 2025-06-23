@@ -43,7 +43,7 @@ const MainPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
   const [likedCats, setLikedCats] = useState<string[]>([]);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
   const fetchCats = async () => {
