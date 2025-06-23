@@ -24,13 +24,6 @@ html, body {
   box-sizing: border-box;
 }
 
-/* Добавим стили для пагинации */
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
 .cats-container {
   flex: 1;
   display: grid;
